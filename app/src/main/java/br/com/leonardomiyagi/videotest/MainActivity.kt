@@ -7,18 +7,13 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import br.com.leonardomiyagi.videotest.databinding.ActivityMainBinding
 import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.util.Util
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
-import io.reactivex.FlowableOnSubscribe
-import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -41,13 +36,23 @@ class MainActivity : AppCompatActivity() {
 
         val firstPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector)
         val secondPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector)
+
         firstPlayer.prepare(mediaSource)
 
+
         binding.videoPlayer.player = firstPlayer
-        binding.videoPlayer.player.playWhenReady = true
+
+
+        val lesson1 = Lesson("http://player.vimeo.com/external/250052982.sd.mp4?s=c74180b58ad296a03a6c9a44d128f8cb0b23021d&profile_id=165&oauth2_token_id=1029745847", 587)
+
+        val lesson2 = Lesson("http://player.vimeo.com/external/248598659.sd.mp4?s=8c65501f9c0fa68dad822b5e01fbae13fdefbe99&profile_id=165&oauth2_token_id=1029745847", 535)
+
+        val lesson3 = Lesson("http://player.vimeo.com/external/250052979.hd.mp4?s=e08628ba7cfd65d1971feae6198426e52f82b26f&profile_id=175&oauth2_token_id=1029745847", 502)
 
 
 
+
+        /*
         Flowable.interval(1, TimeUnit.SECONDS)
                 .flatMap {
                     Flowable.create(FlowableOnSubscribe<String> {
@@ -64,7 +69,6 @@ class MainActivity : AppCompatActivity() {
                             println("Complete")
                         }
                 )
-
         Flowable.interval(1, TimeUnit.SECONDS)
                 .flatMap {
                     Flowable.create(FlowableOnSubscribe<String> {
@@ -102,7 +106,6 @@ class MainActivity : AppCompatActivity() {
                         }
                 )
 
-        /*
         Flowable.interval(1, TimeUnit.SECONDS)
                 .flatMap {
                     Flowable.create(FlowableOnSubscribe<String> {
