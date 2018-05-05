@@ -8,12 +8,16 @@ import android.view.View
 import br.com.leonardomiyagi.videotest.databinding.ActivityMainBinding
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory
+import com.google.android.exoplayer2.source.ClippingMediaSource
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -32,14 +36,17 @@ class MainActivity : AppCompatActivity() {
         }).createMediaSource(Uri.parse("http://player.vimeo.com/external/250052982.sd.mp4?s=c74180b58ad296a03a6c9a44d128f8cb0b23021d&profile_id=165&oauth2_token_id=1029745847"))
         val mediaSource2 = ExtractorMediaSource.Factory(DataSource.Factory {
             OkHttpDataSourceFactory(OkHttpClient(), Util.getUserAgent(this, getString(R.string.app_name)), null).createDataSource()
-        }).createMediaSource(Uri.parse("http://player.vimeo.com/external/250052982.sd.mp4?s=c74180b58ad296a03a6c9a44d128f8cb0b23021d&profile_id=165&oauth2_token_id=1029745847"))
+        }).createMediaSource(Uri.parse("http://player.vimeo.com/external/248598659.sd.mp4?s=8c65501f9c0fa68dad822b5e01fbae13fdefbe99&profile_id=165&oauth2_token_id=1029745847"))
 
         val firstPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector)
         val secondPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector)
 
-        firstPlayer.prepare(mediaSource)
+        firstPlayer.prepare(ConcatenatingMediaSource(
+                ClippingMediaSource(mediaSource2, 0, TimeUnit.MINUTES.toMicros(3) + TimeUnit.SECONDS.toMicros(11)),
+                ClippingMediaSource(mediaSource, 0, TimeUnit.MINUTES.toMicros(10) + TimeUnit.SECONDS.toMicros(10))
+        ))
 
-
+        binding.videoPlayer.setShowMultiWindowTimeBar(true)
         binding.videoPlayer.player = firstPlayer
 
 
